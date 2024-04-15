@@ -12,10 +12,6 @@ final public class AccImmut {
         this.currAmnt = currAmnt;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     @Override
     public  String toString() {
         return "Immutable obj.  name=" + name + "  wallet " + currAmnt.toString();
