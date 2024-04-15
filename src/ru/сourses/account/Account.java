@@ -7,14 +7,18 @@ import java.util.Map;
 
 public class Account {
     private String name;
-    private Map<Currency, Integer> currAmnt = new HashMap<>();
-    private Deque<Action> changes = new ArrayDeque<>();
+    private Map<Currency, Integer> currAmnt;
+    private Deque<Action> changes;
 
     public Account(String name) {
         if (name == null || name.isEmpty())
             throw new IllegalArgumentException("Поле name не должно быть пустым");
-        changes.addFirst(x->x.setName(name,false));
+
         this.name = name;
+        currAmnt = new HashMap<>();
+        changes = new ArrayDeque<>();
+
+        changes.addFirst(x->x.setName(name,false));
     }
 
     public String getName() {
