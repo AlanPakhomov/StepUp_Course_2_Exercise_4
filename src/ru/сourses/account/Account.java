@@ -5,7 +5,7 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Account {
+final public class Account {
     private String name;
     private Map<Currency, Integer> currAmnt = new HashMap<>();
     private Deque<Action> changes = new ArrayDeque<>();
@@ -54,8 +54,8 @@ public class Account {
 
     }
 
-    void delCur(Currency cur) {
-        currAmnt.remove(cur);
+    public AccImmut getSaving(Account acnt) {
+        return new AccImmut(acnt.name,acnt.getCurrAmnt());
     }
 
     @Override
