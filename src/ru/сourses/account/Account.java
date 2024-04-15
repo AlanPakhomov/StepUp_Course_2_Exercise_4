@@ -54,8 +54,8 @@ public class Account {
 
     }
 
-    void delCur(Currency cur) {
-        currAmnt.remove(cur);
+    public AccImmut getSaving(Account acnt) {
+        return new AccImmut(acnt.name,acnt.getCurrAmnt());
     }
 
     @Override
