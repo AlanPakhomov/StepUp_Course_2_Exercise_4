@@ -5,7 +5,20 @@ import java.util.Map;
 
 final public class AccImmut {
     private String name;
-    private Map<Currency, Integer> currAmnt = new HashMap<>();
+    private Map<Currency, Integer> currAmnt;
+
+    public String getName() {
+        return name;
+    }
+
+    public Map<Currency, Integer> getCurrAmnt() {
+        Map<Currency, Integer> crmnt = new HashMap<>();
+
+        for ( Map.Entry<Currency, Integer> crm : currAmnt.entrySet()) {
+            crmnt.put(crm.getKey(), crm.getValue());
+        }
+        return crmnt;
+    }
 
     public AccImmut(String name, Map<Currency, Integer> currAmnt) {
         this.name = name;
