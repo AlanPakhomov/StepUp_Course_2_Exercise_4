@@ -5,7 +5,7 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.Map;
 
-final public class Account {
+public class Account {
     private String name;
     private Map<Currency, Integer> currAmnt = new HashMap<>();
     private Deque<Action> changes = new ArrayDeque<>();
