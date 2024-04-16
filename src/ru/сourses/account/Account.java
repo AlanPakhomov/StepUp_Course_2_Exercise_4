@@ -8,7 +8,7 @@ import java.util.Map;
 public class Account {
     private String name;
     private Map<Currency, Integer> currAmnt;
-    private Deque<Action> changes;
+    private final Deque<Action> changes;
 
     public Account(String name) {
         if (name == null || name.isEmpty())
@@ -35,13 +35,15 @@ public class Account {
         this.name = name;
     }
     public void addCur(Currency cur, int amount, boolean saveChng) {
+        if (amount < 0)
+            throw new IllegalArgumentException("Количество валюты не может быть отрицательным");
         System.out.println("addCur "+cur+"="+amount);
         if(saveChng) changes.addLast(x->x.addCur(cur, amount, false));
         currAmnt.put(cur, amount);
     }
 
     public void checkUndo(){
-        if (changes.isEmpty()||changes.size()==1) throw new IllegalArgumentException("Изменений не было - откат невозможен!");
+        if (changes.isEmpty()||changes.size()==1) throw new RuntimeException("Изменений не было - откат невозможен!");
     }
 
     public void undo(){
@@ -59,7 +61,7 @@ public class Account {
     }
 
     public AccImmut getSaving(Account acnt) {
-        return new AccImmut(acnt.name,acnt.getCurrAmnt());
+        return new AccImmut(acnt);
     }
 
     @Override
