@@ -24,23 +24,19 @@ public class CachingHandler implements InvocationHandler {
                 mtd.setAccessible(true);
                 casheArgs = casheArgsMap.get(objIncome);
 
-                if (casheResultsMap.containsKey(objIncome) ){
+                if (casheResultsMap.containsKey(objIncome)) {
                     if (casheArgs != null && args != null) {
-                        if (casheArgs.length == args.length) {
-                            for (int i = 0; i < casheArgs.length; i++) {
-                                if (!casheArgs[i].equals(args[i])) {
-                                    bNeedCash = true;
-                                }
-                            }
+                        if (casheArgs.length == args.length && casheArgs.equals(args)) {
+
                         } else bNeedCash = true;
                     }
-                }else bNeedCash = true;
+                } else bNeedCash = true;
 
                 if (bNeedCash) {
                     res = method.invoke(objIncome, args);
                     casheResultsMap.put(objIncome, res);
                     casheArgsMap.put(objIncome, args);
-                } else if (casheResultsMap.containsKey(objIncome) ){
+                } else if (casheResultsMap.containsKey(objIncome)) {
                     res = casheResultsMap.get(objIncome);
                 } else
                     throw new RuntimeException("Error cashing object!");
@@ -51,7 +47,7 @@ public class CachingHandler implements InvocationHandler {
                 if (casheArgsMap.containsKey(objIncome)) casheArgsMap.remove(objIncome);
                 res = method.invoke(objIncome, args);
                 break;
-            }
+            }else res = method.invoke(objIncome, args);
         }
 
         return res;
