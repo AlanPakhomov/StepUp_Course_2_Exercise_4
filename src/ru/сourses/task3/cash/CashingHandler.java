@@ -18,17 +18,11 @@ public class CashingHandler implements InvocationHandler {
         this.objIncome = objIncome;
     }
 
-    //очистка кеша через проверку времени жизни объекта - Object[0]
-    private void clearCash(){
-        Map<Integer, Object[]> res = new HashMap<>();
-        for(int key : cashResults.keySet()) {
-            if (new Date().before((Date) cashResults.get(key)[0]))
-                res.put(key, cashResults.get(key));
-        }
-        cashResults.clear();
-        if(res.size()>0)
-            cashResults = new HashMap<>(res);
-
+    private void clearCash() throws InterruptedException {
+        CashCleaner cleaner = new CashCleaner(cashResults);
+        Thread t = new Thread(cleaner);
+        t.start();
+        Thread.sleep(500);//задержка, позволяющая потоку очистить кэш, перед наполенением
     }
 
     //расчет ключа с учетом всех полей объекта
@@ -38,7 +32,7 @@ public class CashingHandler implements InvocationHandler {
         Field[] fields = objIncome.getClass().getDeclaredFields();
         for (int i = 0; i < fields.length; i++) {
             fields[i].setAccessible(true);
-            if(fields[i].getName()=="counter") continue;
+            if (fields[i].getName() == "counter") continue;
             Object fieldValue = fields[i].get(objIncome);
             key += fieldValue.hashCode() * (10 + i + 1);
         }
@@ -56,7 +50,7 @@ public class CashingHandler implements InvocationHandler {
         if (curMethod.isAnnotationPresent(Cash.class)) {
             int objKey = getKey();
             int cashValue = curMethod.getAnnotation(Cash.class).value();
-            if (cashResults.containsKey(objKey)){
+            if (cashResults.containsKey(objKey)) {
                 objArr = cashResults.get(objKey);
                 if (new Date().before((Date) objArr[0])) {
                     objArr[0] = new Date(System.currentTimeMillis() + cashValue);//обновление времени жизни объекта
@@ -71,7 +65,7 @@ public class CashingHandler implements InvocationHandler {
         }
         //чистим кэш в случае, если количество кешированных объектов превышает 100
         //либо по прошествии EXPIRE_CASH_TIME - 10сек.
-        if ((new Date().after((timeToClear))&&cashResults.size()!=0)||cashResults.size()>= MAX_CASH_SIZE) {
+        if ((new Date().after((timeToClear)) && cashResults.size() != 0) || cashResults.size() >= MAX_CASH_SIZE) {
             clearCash();
             timeToClear = new Date(System.currentTimeMillis() + EXPIRE_CASH_TIME);//обновляем время жизни кэша
         }

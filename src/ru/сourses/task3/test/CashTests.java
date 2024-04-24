@@ -20,8 +20,8 @@ public class CashTests {
         interFr.doubleValue();
         interFr.doubleValue();
         interFr.doubleValue();
-        Assertions.assertEquals( interFr.doubleValue(), 2, "Result of doubleValue is wrong");
-        Assertions.assertEquals( fr.getCounter(), 1,"Counter of cashings has wrong value");
+        Assertions.assertEquals(interFr.doubleValue(), 2, "Result of doubleValue is wrong");
+        Assertions.assertEquals(fr.getCounter(), 1, "Counter of cashings has wrong value");
     }
 
     @Test
@@ -38,13 +38,13 @@ public class CashTests {
         Thread.sleep(1001);
         interFr.doubleValue();
 
-        Assertions.assertEquals( interFr.doubleValue(), 3, "Result of doubleValue is wrong");
-        Assertions.assertEquals( fr.getCounter(), 4,"Counter of cashings has wrong value");
+        Assertions.assertEquals(interFr.doubleValue(), 3, "Result of doubleValue is wrong");
+        Assertions.assertEquals(fr.getCounter(), 4, "Counter of cashings has wrong value");
     }
 
     @Test
     @DisplayName("1.3 Check setNum/Denum - add to cash")
-    public void cashsSetnumDenum(){
+    public void cashsSetnumDenum() {
         Fraction fr = new Fraction(6, 2);
         Fractionable interFr = Utils.cash(fr);
 
@@ -56,13 +56,13 @@ public class CashTests {
         interFr.setDenum(3);
         interFr.doubleValue();
 
-        Assertions.assertEquals( interFr.doubleValue(), 3, "Result of doubleValue is wrong");
-        Assertions.assertEquals( fr.getCounter(), 4,"Counter of cashings has wrong value");
+        Assertions.assertEquals(interFr.doubleValue(), 3, "Result of doubleValue is wrong");
+        Assertions.assertEquals(fr.getCounter(), 4, "Counter of cashings has wrong value");
     }
 
     @Test
     @DisplayName("1.4 Check setNum/Denum - dont add to cash")
-    public void cashsSetnumDenum2(){
+    public void cashsSetnumDenum2() {
         Fraction fr = new Fraction(6, 2);
         Fractionable interFr = Utils.cash(fr);
 
@@ -84,12 +84,12 @@ public class CashTests {
         interFr.setDenum(2);
         interFr.doubleValue();
 
-        Assertions.assertEquals( interFr.doubleValue(), 3, "Result of doubleValue is wrong");
-        Assertions.assertEquals( fr.getCounter(), 5,"Counter of cashings has wrong value");
+        Assertions.assertEquals(interFr.doubleValue(), 3, "Result of doubleValue is wrong");
+        Assertions.assertEquals(fr.getCounter(), 5, "Counter of cashings has wrong value");
     }
 
     @Test
-    @DisplayName("1.5 Check cleaning cash by MAX size - 100")
+    @DisplayName("1.5 Check cleaning cash by MAX_CASH_SIZE - 100")
     public void cashsCleanMaxSize() throws InterruptedException {
         Fraction fr = new Fraction(1, 2);
         Fractionable interFr = Utils.cash(fr);
@@ -103,17 +103,17 @@ public class CashTests {
         interFr.doubleValue();
         interFr.setNum(6);
 
-        Assertions.assertEquals( fr.getCounter(), 1,"Counter of cashings has wrong value");
-        Assertions.assertEquals( interFr.doubleValue(), 3, "Result of doubleValue is wrong");
+        Assertions.assertEquals(fr.getCounter(), 1, "Counter of cashings has wrong value");
+        Assertions.assertEquals(interFr.doubleValue(), 3, "Result of doubleValue is wrong");
     }
 
     @Test
-    @DisplayName("1.6 Check cleaning cash by MAX time - 10000mc")
+    @DisplayName("1.6 Check cleaning cash by EXPIRE_CASH_TIME - 10000mc")
     public void cashCleanExpTime() throws InterruptedException {
         Fraction fr = new Fraction(1, 2);
         Fractionable interFr = Utils.cash(fr);
 
-        for (int i = 0; i < 51; i++) {
+        for (int i = 0; i < 99; i++) {
             interFr.doubleValue();
             interFr.setNum(i);
         }
@@ -123,8 +123,8 @@ public class CashTests {
             interFr.doubleValue();
             interFr.setNum(i);
         }
-        Assertions.assertEquals( fr.getCounter(), 50,"Counter of cashings has wrong value");
-        Assertions.assertEquals( interFr.doubleValue(), 35, "Result of doubleValue is wrong");
+        Assertions.assertEquals(fr.getCounter(), 51, "Counter of cashings has wrong value");
+        Assertions.assertEquals(interFr.doubleValue(), 35, "Result of doubleValue is wrong");
     }
 
     @Test
@@ -137,7 +137,7 @@ public class CashTests {
         interFr.setCounter(2);
         interFr.setCounter(3);
 
-        Assertions.assertEquals( fr.getCounter(), 3,"Counter of cashings has wrong value");
+        Assertions.assertEquals(fr.getCounter(), 3, "Counter of cashings has wrong value");
     }
 
     @Test
@@ -171,9 +171,48 @@ public class CashTests {
             interFr2.doubleValue();
             interFr2.setNum(i);
         }
-        Assertions.assertEquals( fr.getCounter(), 51,"Counter of cashings object#1 has wrong value");
-        Assertions.assertEquals( fr2.getCounter(), 41,"Counter of cashings object#2 has wrong value");
-        Assertions.assertEquals( interFr.doubleValue(), 25, "Result of doubleValue object#1 is wrong");
-        Assertions.assertEquals( interFr2.doubleValue(), 3, "Result of doubleValue object#2 is wrong");
+        Assertions.assertEquals(fr.getCounter(), 51, "Counter of cashings object#1 has wrong value");
+        Assertions.assertEquals(fr2.getCounter(), 41, "Counter of cashings object#2 has wrong value");
+        Assertions.assertEquals(interFr.doubleValue(), 25, "Result of doubleValue object#1 is wrong");
+        Assertions.assertEquals(interFr2.doubleValue(), 3, "Result of doubleValue object#2 is wrong");
     }
+
+    @Test
+    @DisplayName("1.9 Check intersection of 2 cash sets")
+    public void cashClean2Sets() {
+        Fraction fr = new Fraction(1, 2);
+        Fractionable interFr = Utils.cash(fr);
+
+        for (int i = 0; i < 80; i++) {
+            interFr.doubleValue();
+            interFr.setNum(i);
+        }
+
+        for (int i = 20; i < 71; i++) {
+            interFr.doubleValue();
+            interFr.setNum(i);
+        }
+        Assertions.assertEquals(fr.getCounter(), 80, "Counter of cashings has wrong value");
+        Assertions.assertEquals(interFr.doubleValue(), 35, "Result of doubleValue is wrong");
+    }
+
+    @Test
+    @DisplayName("1.10 Clean whern expire 1/2 of cash")
+    public void cashCleanHalfOfCash() throws InterruptedException {
+        Fraction fr = new Fraction(1, 2);
+        Fractionable interFr = Utils.cash(fr);
+
+        for (int i = 0; i < 101; i++) {
+            interFr.doubleValue();
+            interFr.setNum(i);
+            if (i == 50) {
+                Thread.sleep(1010);
+                interFr.setCounter(0);
+            }
+
+        }
+        Assertions.assertEquals(fr.getCounter(), 50, "Counter of cashings has wrong value");
+        Assertions.assertEquals(interFr.doubleValue(), 50, "Result of doubleValue is wrong");
+    }
+
 }
