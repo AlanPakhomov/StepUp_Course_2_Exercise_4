@@ -1,4 +1,4 @@
-package ru.сourses.account;
+package ru.сourses.task1.account;
 
 import java.util.HashMap;
 import java.util.Map;
