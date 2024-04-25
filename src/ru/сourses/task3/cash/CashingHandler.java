@@ -18,13 +18,25 @@ public class CashingHandler implements InvocationHandler {
         this.objIncome = objIncome;
     }
 
-    private void clearCash() throws InterruptedException {
-        CashCleaner cleaner = new CashCleaner(cashResults);
+    public void cashCleaner() throws InterruptedException {
+        Map<Integer, Object[]> res = new HashMap<>();//буферный массив
+        for (int key : cashResults.keySet()) {
+            if (new Date().before((Date) cashResults.get(key)[0]))
+                res.put(key, cashResults.get(key));
+        }
+        cashResults.clear();
+        for (int key : res.keySet()) {
+            cashResults.put(key, res.get(key));
+        }
+        res.clear();
+    }
+
+    private void runCleaner() throws InterruptedException {
+        CashCleaner cleaner = new CashCleaner(this);
         Thread t = new Thread(cleaner);
         t.start();
         Thread.sleep(500);//задержка, позволяющая потоку очистить кэш, перед наполенением
     }
-
     //расчет ключа с учетом всех полей объекта
     //искл. счетчик - т.к это искусственное поле для тестов
     private int getKey() throws IllegalAccessException {
@@ -66,7 +78,7 @@ public class CashingHandler implements InvocationHandler {
         //чистим кэш в случае, если количество кешированных объектов превышает 100
         //либо по прошествии EXPIRE_CASH_TIME - 10сек.
         if ((new Date().after((timeToClear)) && cashResults.size() != 0) || cashResults.size() >= MAX_CASH_SIZE) {
-            clearCash();
+            runCleaner();
             timeToClear = new Date(System.currentTimeMillis() + EXPIRE_CASH_TIME);//обновляем время жизни кэша
         }
         return method.invoke(objIncome, args);

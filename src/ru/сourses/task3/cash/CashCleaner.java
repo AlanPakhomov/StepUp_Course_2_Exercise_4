@@ -1,27 +1,17 @@
 package ru.сourses.task3.cash;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
 public class CashCleaner implements Runnable {
-    private Map<Integer, Object[]> cashRes;
+    private CashingHandler cashHand;
 
-    public CashCleaner(Map<Integer, Object[]> cashRes) {
-        this.cashRes = cashRes;
+    public CashCleaner(CashingHandler cashHand) {
+        this.cashHand = cashHand;
     }
 
     public void run() {
-        Map<Integer, Object[]> res = new HashMap<>();//буферный массив
-        for (int key : cashRes.keySet()) {
-            if (new Date().before((Date) cashRes.get(key)[0]))
-                res.put(key, cashRes.get(key));
+        try {
+            cashHand.cashCleaner();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
-        cashRes.clear();
-        for (int key : res.keySet()) {
-            cashRes.put(key, res.get(key));
-        }
-        System.out.println();
-        res.clear();
     }
 }
